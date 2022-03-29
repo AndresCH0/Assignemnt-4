@@ -1,53 +1,203 @@
 
-public class Plot {
-	private int x;
-	private int y;
-	private int width;
-	private int depth;
+public class ManagementCompany {
+//Constants
+	private final int MAX_PROPERTY = 5;
+	private int MGMT_WIDTH = 10;
+	private int MGMT_DEPTH = 10;
 	
-//Constructors 
-	//Default Constructor
-	Plot(){
-		this.x = 0;
-		this.y = 0;
-		this.width = 1;
-		this.depth = 1;
+//Instance Variables
+	private double mgmFeePer;
+	private String name;
+	private String taxID;
+	private Plot plot;
+	private int count = 0;
+	
+//Property Array
+	private Property[] properties = new Property[MAX_PROPERTY];
+
+	
+//Constructors
+	//Default constructor
+	public ManagementCompany(){
+		properties = new Property[MAX_PROPERTY];
+		this.plot = new Plot(0, 0, MGMT_WIDTH, MGMT_DEPTH);
+		this.name = "";
+		this.taxID = "";
+		Property property = new Property();
+		properties [count] = property;
+		count++;
 	}
+
+	//Parameterized Constructor for Management object default Plot object
+	public ManagementCompany(String name, String taxID, double mgmFee) {
+		properties = new Property[MAX_PROPERTY];
+		this.plot = new Plot(0, 0, MGMT_WIDTH, MGMT_DEPTH);
+		this.name = name;
+		this.taxID = taxID;
+		this.mgmFeePer = mgmFee;
+		Property property = new Property();
+		properties [count] = property;
+		count++;
+	}
+	
+	//Parameterized Constructor for Management object and Plot object
+	public ManagementCompany(String name, String taxID, double mgmFee, int x, int y, int width, int depth){
+		properties = new Property[MAX_PROPERTY];
+		this.plot = new Plot(x, y, width, depth);
+		this.name = name;
+		this.taxID = taxID;
+		this.mgmFeePer = mgmFee;
+		Property property = new Property();
+		properties [count] = property;
+		count++;
+	} 
 	
 	//Copy Constructor
-	public Plot(Plot p) {
-		this.x = p.x;
-		this.y = p.y;
-		this.width = p.width;
-		this.depth = p.depth;
+	public ManagementCompany(ManagementCompany otherCompany) {
+		properties = new Property[MAX_PROPERTY];
+		this.name = otherCompany.name;
+		this.taxID = otherCompany.taxID;
+		this.mgmFeePer = otherCompany.mgmFeePer;
+		this.plot = otherCompany.getPlot();
 	}
 	
-	//Parameterized Constructor 
-	public Plot(int x, int y, int width, int depth) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.depth = depth;
-	}
+	
+	
 	
 //Methods
+	public int getMAX_PROPERTY() {
+		return MAX_PROPERTY;
+	}
 	
-	//Determines if this plot overlaps the parameter,returns true if the two plots overlap, false otherwise
-	public boolean overlaps(Plot plot) {
-		//x,y coordinates for the bottom right corner of the plot
-		int xr = plot.x + plot.width;
-		int ybr = plot.y - plot.depth;
-		//y coordinates for the top right corner
-		int ytr = plot.y;
-		
-		//Center coordinates of the parameter plot
-		int xcenter = (xr + x)/2;
-		int ycenter = (ytr + y)/2;
-		
-		
-		if(this.x < xcenter || this.x > x || this.x > xcenter) {
-			
+	
+	
+	
+	
+	//Add Property to the array. 
+	//argument: Property object
+	public int addProperty(Property property) {
+		int i;
+		for(i = 0; i < count; i++) {
+			if (properties[i].getPlot().overlaps(property.getPlot()))
+				return -4;
 		}
-		return false;
+		
+		if (count == MAX_PROPERTY)
+			return -1;
+		if (property.equals(null))
+			return -2;
+		if (this.plot.encompasses(property.getPlot()))
+			return -3;
+		else {
+			properties[count] = property;
+			count++;
+			return (-count);
+		}
+		
+	}
+	
+	//creates new property object with the passed parameter values and adds it to the array 
+	public int addProperty(String name, String city, double rent, String owner) {
+		Property property = new Property(name, city, rent, owner, 0, 0, 1, 1);
+		properties[count] = property;
+		count++; 
+		System.out.println(count);
+		int i;
+		for(i = 0; i < count; i++) {
+			if(properties[i].getPlot().overlaps(property.getPlot()))
+				return -4;
+		}
+		if (count == MAX_PROPERTY) {
+			return -1;
+		}
+		if(this.plot.encompasses(property.getPlot())) {
+			return -3;
+		}
+		else {
+			properties[count] = property;
+			count++;
+			return (-count);
+		}
+	}
+
+	
+	//Creates new property object and plot with the parameter values
+	public int addProperty(String name, String city, double rent, String owner, int x, int y, int width, int depth) {
+		Property property = new Property(name, city, rent, owner, x, y, width, depth);
+		properties[count] = property;
+		count++;
+		
+		Plot plot = new Plot(x, y, width, depth);
+		
+		int i;
+		for(i = 0; i < count; i++) {
+			if(properties[i].getPlot().overlaps(property.getPlot()))
+				return -4;
+		}
+		
+		if(count == MAX_PROPERTY) {
+			return -1;
+		}
+		else if(this.plot.encompasses(property.getPlot())){
+			return -3;
+		}
+		else {
+			properties[count] = property;
+			count++;
+			return (-count);
+		}
+		
+	}
+
+	
+	//Adds all the rent values of the properties within the array
+	public double totalRent() {
+		double totalRent = 0.0;
+
+		for(int i = 0; i < count; i++) {
+			if(properties[i] != null)
+				totalRent += properties[i].getRentAmount();	
+		}
+		return totalRent;
+	}
+	
+	
+	
+	//Finds the property with the highest rent amount and return the rent amount
+	public double maxRentProp() {
+		double maxRentProp = 0.0;
+		maxRentProp = properties[maxRentPropertyIndex()].getRentAmount();
+		return maxRentProp;
+	}
+	
+	
+	
+	//Find the property with the highest rent amount and returns it's array index location
+	private int maxRentPropertyIndex() {
+		int maxIndex = 0;
+		for(int i = 0; i < count; i++) {
+			if(properties[i] != null) {
+				if(properties[maxIndex].getRentAmount() < properties[i].getRentAmount()) {
+					maxIndex = i;
+				}
+			}
+		}
+		return maxIndex;
+	}
+	
+	
+	//Displays the property info of an element from the properties[] array at a given index
+	private String displayPropertyAtIndex(int i) {
+		return "Property Name: " + properties[i].getPropertyName() + " Located in: " + properties[i].getCity() + " Belonging to: " + properties[i].getOwner() +
+				" Rent Amount: " + properties[i].getRentAmount();
+	}
+	
+	//Returns the plot
+	public Plot getPlot() {
+		return plot;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }
