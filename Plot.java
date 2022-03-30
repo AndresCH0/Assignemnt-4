@@ -35,6 +35,18 @@ public class Plot {
 	//Determines if this plot overlaps the parameter,returns true if the two plots overlap, false otherwise
 	public boolean overlaps(Plot plot) {
 		
+		//Bottom right Coordinates for this.plot
+		xBR = (this.plot.getX() + this.plot.getWidth());
+		yBR = (this.plot.getY() + this.plot.getLength());
+		
+		//Bottom Right Coordinates For The Argument Plot
+		argBRX = (plot.getX() + plot.getWidth());
+		argBRY = (plot.getY() - plot.getLength());
+		if(plot.getX() >= (plot.getX() + plot.getWidth()) || this.plot.getX() >= (plot.getX() + plot.getWidth()) || plot.getY >= (this.plot.getY() + this.plot.getLength()) || this.plot.getY >= (plot.getY() + plot.getLength())){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	
