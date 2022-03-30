@@ -14,6 +14,12 @@ public class ManagementCompany {
 	
 //Property Array
 	private Property[] properties = new Property[MAX_PROPERTY];
+	
+	public void copyArray(Property[] properties) {
+		for(int i = 0; i < properties.length; i++) {
+			this.properties[i] = properties[i];
+		}
+	}
 
 	
 //Constructors
@@ -48,8 +54,9 @@ public class ManagementCompany {
 		this.taxID = taxID;
 		this.mgmFeePer = mgmFee;
 		Property property = new Property();
-		properties [count] = property;
+		properties[count] = property;
 		count++;
+		
 	} 
 	
 	//Copy Constructor
@@ -59,15 +66,22 @@ public class ManagementCompany {
 		this.taxID = otherCompany.taxID;
 		this.mgmFeePer = otherCompany.mgmFeePer;
 		this.plot = otherCompany.plot;
-		Property property;
-		for(int i = 0 ; i<
-		count++;
+	
+		for(int i = 0; i < properties.length; i++) {
+			this.properties[i] = properties[i];
+		}
+		this.count = otherCompany.getCount();
 	}
 	
 	
 	
 	
 //Methods
+	public int getCount() {
+		return count;
+	}
+	
+	
 	public int getMAX_PROPERTY() {
 		return MAX_PROPERTY;
 	}
@@ -79,43 +93,11 @@ public class ManagementCompany {
 	//Add Property to the array. 
 	//argument: Property object
 	public int addProperty(Property property) {
-		properties[count] = property;
-		count++;
-		
-		int i;
-		for(i = 0; i < count; i++) {
+		//properties[count] = property;
+		//count++;
+		for(int i = 0; i < count; i++) {
 			if(properties[i].getPlot().overlaps(property.getPlot()))
-				return -4;
-		}
-		
-		if(count == MAX_PROPERTY) {
-			return -1;
-		}
-		
-		else if(property.equals(null)) {
-			return -2;
-		}
-		else if(this.plot.encompasses(property.getPlot()) ) {
-			return -3;
-		}
-		else{
-			properties[count] = property;
-			count++;
-			return count;
-		}
-	}
-	
-	//creates new property object with the passed parameter values and adds it to the array 
-	public int addProperty(String name, String city, double rent, String owner) {
-		Property property = new Property(name, city, rent, owner, 0, 0, 1, 1);
-		
-		properties[count] = property;
-		count++;
-		System.out.println(count);
-		int i;
-		for(i = 0; i < count; i++) {
-			if(properties[i].getPlot().overlaps(property.getPlot()))
-
+			
 				return -4;
 		}
 		
@@ -132,6 +114,38 @@ public class ManagementCompany {
 		else{
 			properties[count] = property;
 			System.out.println(count);
+			count++;
+			return count;
+		}
+		
+	}
+	
+	//creates new property object with the passed parameter values and adds it to the array 
+	public int addProperty(String name, String city, double rent, String owner) {
+		Property property = new Property(name, city, rent, owner, 0, 0, 1, 1);
+		
+		//properties[count] = property;
+		System.out.println(count);
+		
+		for(int i = 0; i < count; i++) {
+			if(properties[i].getPlot().overlaps(property.getPlot()))
+			
+				return -4;
+		}
+		
+		if(count == MAX_PROPERTY) {
+			return -1;
+		}
+		
+		else if(property.equals(null)) {
+			return -2;
+		}
+		else if(this.plot.encompasses(property.getPlot()) ) {
+			return -3;
+		}
+		else{
+			properties[count] = property;
+			count++;
 			return count;
 		}
 	}
@@ -162,6 +176,7 @@ public class ManagementCompany {
 			properties[count] = property;
 			
 			System.out.println(count);
+			count++;
 			return count;
 		}
 	}
@@ -170,7 +185,7 @@ public class ManagementCompany {
 	//Adds all the rent values of the properties within the array
 	public double totalRent() {
 		double totalRent = 0.0;
-		for(int i = 0; i < count; i++) {
+		for(int i = 0; i < count  -1; i++) {
 				totalRent += properties[i].getRentAmount();	
 		}
 		return totalRent;
